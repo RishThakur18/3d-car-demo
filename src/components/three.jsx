@@ -40,7 +40,10 @@ function MyThree() {
       }
     });
     const sphere = new THREE.Mesh(geometry, material);
-    scene.add(sphere);
+    
+    const group = new THREE.Group();
+    group.add(sphere);// Set a visible scale
+    scene.add(group);
 
     //atmosphere
     var ageometry = new THREE.SphereGeometry(5, 50, 50);
@@ -54,10 +57,24 @@ function MyThree() {
     atmosphere.scale.set(1.1, 1.1, 1.1);
     scene.add(atmosphere);
 
-    // const group = new THREE.Group();
-    // group.add(sphere);
-    // scene.add(group);
+    const starGeometry = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0Xffffff
+    })
 
+    const starVertices = []
+    for(let i=0; i < 1000; i++){
+      const x = (Math.random() - 0.5) * 2000;
+      const y = (Math.random() - 0.5) * 2000;
+      const z = -(Math.random() - 0.5) * 2000;
+      starVertices.push(x, y, z);
+    }
+
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
+    
     camera.position.z = 15;
 
     const mouse = {
@@ -68,11 +85,17 @@ function MyThree() {
     function animate(){
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
-      sphere.rotation.y += 0.0025;
-      sphere.rotation.x += 0.0025;
-      // group.rotation.y =+ mouse.y;
+      sphere.rotation.y += 0.001;
+      sphere.rotation.x += 0.001;
+      group.rotation.x = mouse.y * 0.5;
+      group.rotation.y = mouse.x * 0.5;
     }
     animate();
+    
+    document.addEventListener('mousemove', (event) => {
+      mouse.x = (event.clientX / innerWidth);
+      mouse.y = (event.clientY / innerHeight);
+    });
   }, []);
 
   return (
