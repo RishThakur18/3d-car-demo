@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import vertexShader from '../shaders/vertex.glsl';
 import fragmentShader from '../shaders/fragment.glsl';
@@ -8,6 +8,7 @@ import atmosphereFragmentShader from '../shaders/atmosphereFragment.glsl';
 
 function MyThree() {
   const refContainer = useRef(null);
+  const [mouse, setMouse] = useState({ x: undefined, y: undefined });
 
   useEffect(() => {
     const scene = new THREE.Scene();
@@ -20,14 +21,14 @@ function MyThree() {
       0.1, 
       1000
     );
-   
+
     const renderer = new THREE.WebGLRenderer({
-       canvas: refCanvas,
-       antialias: true
+      canvas: refCanvas,
+      antialias: true
     });
     renderer.setSize(canvasWrapper.offsetWidth, canvasWrapper.offsetHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    
+
     // globe
     var geometry = new THREE.SphereGeometry(5, 50, 50);
     var material = new THREE.ShaderMaterial({
@@ -40,12 +41,12 @@ function MyThree() {
       }
     });
     const sphere = new THREE.Mesh(geometry, material);
-    
+
     const group = new THREE.Group();
-    group.add(sphere);// Set a visible scale
+    group.add(sphere); // Set a visible scale
     scene.add(group);
 
-    //atmosphere
+    // atmosphere
     var ageometry = new THREE.SphereGeometry(5, 50, 50);
     var amaterial = new THREE.ShaderMaterial({
       vertexShader: atmosphereVertexShader,
@@ -74,15 +75,10 @@ function MyThree() {
 
     const stars = new THREE.Points(starGeometry, starMaterial);
     scene.add(stars);
-    
+
     camera.position.z = 15;
 
-    const mouse = {
-      x: undefined,
-      y: undefined
-    }
-
-    function animate(){
+    function animate() {
       requestAnimationFrame(animate);
       renderer.render(scene, camera);
       sphere.rotation.y += 0.001;
@@ -91,24 +87,35 @@ function MyThree() {
       group.rotation.y = mouse.x * 0.5;
     }
     animate();
-    
-    document.addEventListener('mousemove', (event) => {
-      mouse.x = (event.clientX / innerWidth);
-      mouse.y = (event.clientY / innerHeight);
-    });
-  }, []);
+
+    function handleMouseMove(event) {
+      setMouse({
+        x: event.clientX / window.innerWidth,
+        y: event.clientY / window.innerHeight
+      });
+    }
+
+    document.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+    };
+
+  }, [mouse]);
 
   document.addEventListener('touchmove', (event) => {
     const touch = event.touches[0];
-    mouse.x = (touch.clientX / window.innerWidth);
-    mouse.y = (touch.clientY / window.innerHeight);
-  }, []);
+    setMouse({
+      x: touch.clientX / window.innerWidth,
+      y: touch.clientY / window.innerHeight
+    });
+  }, [mouse]);
 
 
   return (
-  <div className="canvas-wrapper"> 
-    <canvas id="main-canvas"></canvas>
-  </div>
+    <div className="canvas-wrapper">
+      <canvas id="main-canvas"></canvas>
+    </div>
   );
 }
 
