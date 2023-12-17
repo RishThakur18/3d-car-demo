@@ -98,6 +98,13 @@ function MyThree() {
     });
   }, []);
 
+  document.addEventListener('touchmove', (event) => {
+    const touch = event.touches[0];
+    mouse.x = (touch.clientX / window.innerWidth);
+    mouse.y = (touch.clientY / window.innerHeight);
+  }, []);
+
+
   return (
   <div className="canvas-wrapper"> 
     <canvas id="main-canvas"></canvas>
