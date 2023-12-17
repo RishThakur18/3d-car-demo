@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import vertexShader from '../shaders/vertex.glsl';
 import fragmentShader from '../shaders/fragment.glsl';
@@ -7,23 +7,24 @@ import atmosphereVertexShader from '../shaders/atmosphereVertex.glsl';
 import atmosphereFragmentShader from '../shaders/atmosphereFragment.glsl';
 
 function MyThree() {
-  const refContainer = useRef(null);
   const [mouse, setMouse] = useState({ x: undefined, y: undefined });
+  const globeTexture = useMemo(() => new THREE.TextureLoader().load('/globe.jpeg'), []);
+  const canvasWrapperRef = useRef(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
     const scene = new THREE.Scene();
-    const canvasWrapper = document.querySelector(".canvas-wrapper");
-    const refCanvas = document.querySelector("#main-canvas");
+    const canvasWrapper = canvasWrapperRef.current;
 
     const camera = new THREE.PerspectiveCamera(
-      75, 
-      canvasWrapper.offsetWidth / canvasWrapper.offsetHeight, 
-      0.1, 
+      75,
+      canvasWrapper.offsetWidth / canvasWrapper.offsetHeight,
+      0.1,
       1000
     );
 
     const renderer = new THREE.WebGLRenderer({
-      canvas: refCanvas,
+      canvas: canvasRef.current,
       antialias: true
     });
     renderer.setSize(canvasWrapper.offsetWidth, canvasWrapper.offsetHeight);
@@ -36,14 +37,14 @@ function MyThree() {
       fragmentShader,
       uniforms: {
         globeTexture: {
-          value: new THREE.TextureLoader().load('/globe.jpeg')
+          value: globeTexture
         }
       }
     });
     const sphere = new THREE.Mesh(geometry, material);
 
     const group = new THREE.Group();
-    group.add(sphere); // Set a visible scale
+    group.add(sphere); 
     scene.add(group);
 
     // atmosphere
@@ -64,7 +65,7 @@ function MyThree() {
     })
 
     const starVertices = []
-    for(let i=0; i < 1000; i++){
+    for (let i = 0; i < 1000; i++) {
       const x = (Math.random() - 0.5) * 2000;
       const y = (Math.random() - 0.5) * 2000;
       const z = -(Math.random() - 0.5) * 2000;
@@ -88,33 +89,35 @@ function MyThree() {
     }
     animate();
 
-    function handleMouseMove(event) {
-      setMouse({
-        x: event.clientX / window.innerWidth,
-        y: event.clientY / window.innerHeight
-      });
+    function handleMouseMove(event, type) {
+      if (type === "mouse") {
+        setMouse({
+          x: event.clientX / window.innerWidth,
+          y: event.clientY / window.innerHeight
+        });
+      }
+      else {
+        const touch = event.touches[0];
+        setMouse({
+          x: touch.clientX / window.innerWidth,
+          y: touch.clientY / window.innerHeight
+        });
+      }
     }
-
-    document.addEventListener('mousemove', handleMouseMove);
+    
+    document.addEventListener('mousemove', (e) => handleMouseMove(e, 'mouse'));
+    document.addEventListener('touchmove', (e) => handleMouseMove(e, 'touch'));
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleMouseMove);
     };
-
-  }, [mouse]);
-
-  document.addEventListener('touchmove', (event) => {
-    const touch = event.touches[0];
-    setMouse({
-      x: touch.clientX / window.innerWidth,
-      y: touch.clientY / window.innerHeight
-    });
-  }, [mouse]);
-
+      
+    }, [mouse]);
 
   return (
-    <div className="canvas-wrapper">
-      <canvas id="main-canvas"></canvas>
+    <div ref={canvasWrapperRef}>
+      <canvas ref={canvasRef}></canvas>
     </div>
   );
 }
