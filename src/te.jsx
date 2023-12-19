@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import vertexShader from '../shaders/vertex.glsl';
 import fragmentShader from '../shaders/fragment.glsl';
+
 import atmosphereVertexShader from '../shaders/atmosphereVertex.glsl';
 import atmosphereFragmentShader from '../shaders/atmosphereFragment.glsl';
 
@@ -11,24 +12,33 @@ function MyThree() {
   const globeTexture = useMemo(() => new THREE.TextureLoader().load('/globe.jpeg'), []);
   const canvasWrapperRef = useRef(null);
   const canvasRef = useRef(null);
+  var camera = null;
+  var canvasWrapper = null;
+  var renderer = null;
 
   useEffect(() => {
-    const scene = new THREE.Scene();
-    const canvasWrapper = canvasWrapperRef.current;
 
-    const camera = new THREE.PerspectiveCamera(
+    canvasWrapper = canvasWrapperRef.current;
+    camera = new THREE.PerspectiveCamera(
       75,
       canvasWrapper.offsetWidth / canvasWrapper.offsetHeight,
       0.1,
       1000
     );
-
-    const renderer = new THREE.WebGLRenderer({
+    camera.position.z = 15;
+    renderer = new THREE.WebGLRenderer({
       canvas: canvasRef.current,
       antialias: true
     });
     renderer.setSize(canvasWrapper.offsetWidth, canvasWrapper.offsetHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
+
+
+  if (!canvasWrapperRef.current || !renderer) {
+    return;
+  }
+
+    const scene = new THREE.Scene();
 
     // globe
     var geometry = new THREE.SphereGeometry(5, 50, 50);
@@ -44,7 +54,7 @@ function MyThree() {
     const sphere = new THREE.Mesh(geometry, material);
 
     const group = new THREE.Group();
-    group.add(sphere); 
+    group.add(sphere);
     scene.add(group);
 
     // atmosphere
@@ -77,7 +87,6 @@ function MyThree() {
     const stars = new THREE.Points(starGeometry, starMaterial);
     scene.add(stars);
 
-    camera.position.z = 15;
 
     function animate() {
       requestAnimationFrame(animate);
@@ -104,7 +113,7 @@ function MyThree() {
         });
       }
     }
-    
+
     document.addEventListener('mousemove', (e) => handleMouseMove(e, 'mouse'));
     document.addEventListener('touchmove', (e) => handleMouseMove(e, 'touch'));
 
@@ -112,8 +121,9 @@ function MyThree() {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('touchmove', handleMouseMove);
     };
-      
-    }, [mouse]);
+
+  }, [mouse, canvasWrapperRef.current, renderer]);
+
 
   return (
     <div ref={canvasWrapperRef}>
