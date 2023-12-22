@@ -106,6 +106,7 @@ export default function ImageWithMedia({ media }) {
                     </defs>
                 </svg>
             </div>
+            <button className='scroll-down-btn'> V </button>
             <div className='media-content'>{media}</div>
         </div>
     );
