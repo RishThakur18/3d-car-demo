@@ -17,7 +17,7 @@ export function Ground() {
       t.repeat.set(5, 5);
     });
 
-    normal.encoding = LinearEncoding;
+    normal.colorSpace = LinearSRGBColorSpace;
   }, [normal, roughness]);
 
   useFrame((state, delta) => {
