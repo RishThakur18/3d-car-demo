@@ -1,6 +1,4 @@
 import { useEffect } from 'react';
-import '../styles/imageWithMedia.css'
-
 
 export default function ImageWithMedia({ media }) {
 

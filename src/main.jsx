@@ -1,12 +1,15 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider } from 'react-router-dom';
 import { mainRouter } from './routes';
 
-import "./styles/main.css";
+import "./main.css";
+import { RouterProvider } from 'react-router-dom';
+import { Ground } from './theme/carshow/components/ground';
+import CarShowMain from './theme/carshow/carShowMain';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-      <RouterProvider router={mainRouter} />
+      {/* <RouterProvider router={mainRouter} /> */}
+      <CarShowMain/>
   </React.StrictMode>,
 )

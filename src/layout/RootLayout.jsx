@@ -4,16 +4,16 @@ import SectionGroup from "./SectionGroup";
 export default function RootLayout() {
 
     return (
-        <div className="root-wrapper">
-            <SectionGroup className="header-group">
+        <>
+            {/* <SectionGroup className="header-group">
                 <></>
-            </SectionGroup>
-            <SectionGroup className="main-group">
+            </SectionGroup> */}
+            {/* <SectionGroup className="main-group"> */}
                 <Outlet />
-            </SectionGroup>
-            <SectionGroup className="footer-group">
+            {/* </SectionGroup> */}
+            {/* <SectionGroup className="footer-group">
                 <></>
-            </SectionGroup>
-        </div>
+            </SectionGroup> */}
+        </>
     );
 }
