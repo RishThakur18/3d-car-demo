@@ -4,16 +4,16 @@ import { LUTPass, LUTCubeLoader } from 'three-stdlib'
 import * as THREE from 'three'
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import vertexShader from '../shaders/vertex.glsl';
-import fragmentShader from '../shaders/fragment.glsl';
+import vertexShader from './shaders/vertex.glsl';
+import fragmentShader from './shaders/fragment.glsl';
 
-import atmosphereVertexShader from '../shaders/atmosphereVertex.glsl';
-import atmosphereFragmentShader from '../shaders/atmosphereFragment.glsl';
+import atmosphereVertexShader from './shaders/atmosphereVertex.glsl';
+import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl';
 
 extend({ LUTPass })
 
 function Grading() {
-  const { texture3D } = useLoader(LUTCubeLoader, '/cubicle-99.CUBE')
+  const { texture3D } = useLoader(LUTCubeLoader, import.meta.env.BASE_URL + "/cubicle-99.CUBE")
   return (
     <Effects>
       <lUTPass lut={texture3D} intensity={0.75} />
