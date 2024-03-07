@@ -13,7 +13,7 @@ import atmosphereFragmentShader from './shaders/atmosphereFragment.glsl';
 extend({ LUTPass })
 
 function Grading() {
-  const { texture3D } = useLoader(LUTCubeLoader, import.meta.env.BASE_URL + "/cubicle-99.CUBE")
+  const { texture3D } = useLoader(LUTCubeLoader, import.meta.env.BASE_URL + "cubicle-99.CUBE")
   return (
     <Effects>
       <lUTPass lut={texture3D} intensity={0.75} />
