@@ -17,7 +17,6 @@ import {
 import { Ground } from "./components/ground";
 import { Rings } from "./components/rings";
 import { FloatingGrid } from "./components/floatingGrid";
-import { Boxes } from "./components/boxes";
 import { Car } from "./components/car";
 
 function CarShowMain() {
@@ -26,8 +25,10 @@ function CarShowMain() {
       <Canvas shadows>
 
         <OrbitControls
+          minDistance={4}
+          maxDistance={8}
           target={[0, 0.35, 0]}
-          maxPolarAngle={1.45}
+          maxPolarAngle={Math.PI / 2}
         />
 
         <PerspectiveCamera makeDefault fov={50} position={[3, 2, 5]} />
@@ -38,7 +39,7 @@ function CarShowMain() {
           {(texture) => (
             <>
               <Environment map={texture} />
-              {/* <Car /> */}
+              <Car />
             </>
           )}
         </CubeCamera>
@@ -53,7 +54,7 @@ function CarShowMain() {
           shadow-bias={-0.0001}
         />
         <spotLight
-          color={[0.14, 0.5, 1]}
+          color={[0.20, 0.5, 1]}
           intensity={200}
           angle={0.6}
           penumbra={0.5}
@@ -63,23 +64,21 @@ function CarShowMain() {
         />
         <Ground />
         <FloatingGrid />
-        <Boxes />
         <Rings />
 
         <EffectComposer>
-          {/* <DepthOfField focusDistance={0.0035} focalLength={0.01} bokehScale={3} height={480} /> */}
           <Bloom
             blendFunction={BlendFunction.ADD}
-            intensity={0.3} // The bloom intensity.
-            width={300} // render width
-            height={300} // render height
-            kernelSize={5} // blur kernel size
-            luminanceThreshold={0.15} // luminance threshold. Raise this value to mask out darker elements in the scene.
-            luminanceSmoothing={0.025} // smoothness of the luminance threshold. Range is [0, 1]
+            intensity={0.3} 
+            width={300} 
+            height={300} 
+            kernelSize={5} 
+            luminanceThreshold={0.15} 
+            luminanceSmoothing={0.025} 
           />
           <ChromaticAberration
-            blendFunction={BlendFunction.NORMAL} // blend mode
-            offset={[0.0005, 0.0012]} // color offset
+            blendFunction={BlendFunction.NORMAL} 
+            offset={[0.0005, 0.0012]} 
           />
         </EffectComposer>
       </Canvas>
